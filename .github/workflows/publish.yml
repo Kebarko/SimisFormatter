@@ -1,0 +1,87 @@
+# Publishes SimisFormatter to the Visual Studio Marketplace when a version tag such as v0.1.0 is pushed.
+# It signs in with Trusted Publishing (OIDC), so no token is stored in the repository.
+# The Trusted Publishing policy of the Marketplace publisher kebarko must name the repository owner Kebarko,
+# the repository SimisFormatter, the workflow publish.yml and the environment marketplace.
+
+name: Publish
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Check that the tag matches the version
+        run: |
+          version=$(node -p "require('./package.json').version")
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::The tag $GITHUB_REF_NAME does not match the version $version in package.json."
+            exit 1
+          fi
+
+      - name: Install
+        run: npm ci
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit tests
+        run: npm test
+
+      # VS Code needs a display, which the runner provides through a virtual X server.
+      - name: Integration tests
+        run: xvfb-run -a npm run test:vscode
+
+      - name: Package
+        run: npm run package
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: vsix
+          path: '*.vsix'
+          if-no-files-found: error
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    # The Trusted Publishing policy accepts only jobs in this environment.
+    environment: marketplace
+    permissions:
+      contents: read
+      id-token: write  # Lets the job get a GitHub OIDC token for Trusted Publishing.
+    steps:
+      # The repository is checked out only to install the version of vsce in package-lock.json.
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: vsix
+          path: artifacts
+
+      # Publishes the package that the build job tested. --skip-duplicate lets a failed run be run again after the upload succeeded.
+      - name: Publish
+        run: npx vsce publish --oidc --skip-duplicate --packagePath artifacts/*.vsix

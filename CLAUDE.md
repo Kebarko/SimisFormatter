@@ -8,7 +8,7 @@ The formatting rules are ported from the C# library **SimisSharp**, which is the
 
 Repository: https://github.com/Kebarko/SimisFormatter. License: MIT, as SimisSharp.
 
-**Status:** the reader, parser and writer are ported, and the formatter matches SimisSharp on the whole test corpus (see "Test corpus"). Publishing is not set up yet.
+**Status:** the reader, parser and writer are ported, and the formatter matches SimisSharp on the whole test corpus (see "Test corpus"). Publishing to the Visual Studio Marketplace is set up (see "Releasing"), but no version is published yet.
 
 ## Reference implementation: SimisSharp
 
@@ -113,7 +113,16 @@ Before reporting a change as done, run `typecheck`, `lint` and `test`, and `test
 
 CI (`.github/workflows/ci.yml`) runs `typecheck`, `lint`, `test` and `test:vscode` on Windows and Linux for every push to `main` and every pull request, and keeps the `.vsix` built on Linux as an artifact. It cannot run the corpus check, so run that locally.
 
-Press F5 in VS Code ("Run Extension") to try the extension in a development host, which opens `test/fixtures/`. Publishing to the Visual Studio Marketplace or Open VSX is not set up yet; the `publisher` in `package.json` (`kebarko`) must match the Marketplace publisher ID when it is.
+Press F5 in VS Code ("Run Extension") to try the extension in a development host, which opens `test/fixtures/`.
+
+## Releasing
+
+`.github/workflows/publish.yml` publishes the extension to the Visual Studio Marketplace when a tag such as `v0.2.0` is pushed. It checks that the tag matches the version in `package.json`, runs all checks, builds the `.vsix`, and publishes that package with Trusted Publishing (`vsce publish --oidc`), so no token is stored anywhere.
+
+- The Marketplace publisher ID is `kebarko`, the `publisher` in `package.json`. Its Trusted Publishing policy (at https://marketplace.visualstudio.com/manage) names the owner `Kebarko`, the repository `SimisFormatter`, the workflow `publish.yml` and the environment `marketplace`. Renaming the workflow file or the environment breaks publishing until the policy is changed to match.
+- To release: set the version in `package.json` (major.minor.patch only; the Marketplace does not accept pre-release suffixes such as `-beta`), rename "Unreleased" in `CHANGELOG.md` to the version and date, run the checks and the corpus check, commit, then tag the commit `v<version>` and push the commit and the tag.
+- Ask before pushing a version tag. A published version cannot be replaced, only followed by a new version.
+- Open VSX, which VSCodium and other editors use, is not set up.
 
 ## Code style
 
