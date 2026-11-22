@@ -156,7 +156,7 @@ function compare(result: ReferenceResult, outcome: Outcome, expected: string | u
     if (outcome.kind === 'formatted') {
         return `only SimisSharp failed to parse: ${result.message}`;
     }
-    return outcome.line === result.line ? undefined : `parse errors on different lines: SimisSharp ${result.message}, formatter ${outcome.message}`;
+    return outcome.message === result.message ? undefined : `different parse errors: SimisSharp ${result.message}, formatter ${outcome.message}`;
 }
 
 /**
@@ -216,7 +216,7 @@ function main(): number {
         `Folder: ${folder}`,
         `Files checked: ${checked}`,
         `Same output as SimisSharp: ${checked - bothFailed - problems.length}`,
-        `Not parsed by either, on the same line: ${bothFailed}`,
+        `Not parsed by either, with the same error: ${bothFailed}`,
         `Problems: ${problems.length}`,
         `Not loaded by SimisSharp, and not checked: ${loadErrors}`,
         `Formatting time: ${Math.round(milliseconds)} ms`,

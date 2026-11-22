@@ -8,7 +8,7 @@ The formatting rules are ported from the C# library **SimisSharp**, which is the
 
 Repository: https://github.com/Kebarko/SimisFormatter. License: MIT, as SimisSharp.
 
-**Status:** the extension is set up (language, settings, provider, tests, corpus check), but the reader, parser and writer are not ported yet: `format` in `src/core/format.ts` throws. Porting them is the next step.
+**Status:** the reader, parser and writer are ported, and the formatter matches SimisSharp on the whole test corpus (see "Test corpus"). Publishing is not set up yet.
 
 ## Reference implementation: SimisSharp
 
@@ -30,17 +30,18 @@ Repository: https://github.com/Kebarko/SimisFormatter. License: MIT, as SimisSha
 | `SimisValue.cs` | `src/core/escape.ts` | Only escaping and unescaping of quoted strings. |
 | `SimisPathService.cs`, `WildcardMatcher.cs` | `src/core/path.ts`, `src/core/wildcard.ts` | Path matching for the `inline` and `table` settings. |
 | `IO/Writer.cs`, `IO/WriterOptions.cs` | `src/core/writer.ts`, `src/core/options.ts` | |
-| `SimisParseException.cs` | `src/core/errors.ts` | `SimisParseError` with a 1-based `line`. Done. |
-| `SimisTextDecoder.CheckSubheader` | `src/core/header.ts` | `isTextSimisHeader`. Done. |
+| `SimisParseException.cs` | `src/core/errors.ts` | `SimisParseError` with a 1-based `line`. |
+| `SimisTextDecoder.CheckSubheader` | `src/core/header.ts` | `isTextSimisHeader`. |
 | `SimisProcessor.Save(Parse(text))` | `src/core/format.ts` | `format(text, options, newLine)`, the entry point the extension and the corpus check call. |
+| .NET `char.IsWhiteSpace`, `string.Trim`, `char.ToUpperInvariant`, `OrdinalIgnoreCase`, `int.TryParse` | `src/core/text.ts` | Helpers that behave as the .NET methods (see "Porting pitfalls"). |
 
-`IO/WriterOptions.cs` is done as well. Not ported: the rest of `SimisTextDecoder` (VS Code decodes the file), `SimisProcessor` file I/O and atomic saving, number parsing and formatting, node editing. `src/core/index.ts` exports what the extension and the tools use.
+Not ported: the rest of `SimisTextDecoder` (VS Code decodes the file), `SimisProcessor` file I/O and atomic saving, number parsing and formatting, node editing, and the typed accessors of the reader. `src/core/index.ts` exports what the extension, the tests and the tools use. The port keeps SimisSharp's quirks for parity, such as blank line counts stored in a byte (256 blank lines count as none); fix them in SimisSharp first.
 
 ### Porting pitfalls
 
 - .NET `char.IsWhiteSpace` is not JavaScript `\s`: .NET includes U+0085 and excludes U+FEFF, JavaScript does the opposite. Build the explicit character set as `TokenConfiguration` does, and never use `\s` or `trim()` to find token boundaries.
-- `StringComparison.OrdinalIgnoreCase` has no direct equivalent. Use the single helper in `src/core/text.ts` for every case-insensitive comparison, never `localeCompare` or locale-dependent case mapping.
-- `int.TryParse(..., NumberStyles.Integer, InvariantCulture)` rejects `12abc` and values outside the 32-bit range, which `parseInt` accepts. Port it as a strict parser; the `Columns` setting relies on this.
+- `StringComparison.OrdinalIgnoreCase` and `char.ToUpperInvariant` have no direct equivalent. Use `equalsIgnoreCase` and `toUpperInvariant` in `src/core/text.ts` for every case-insensitive comparison, never `localeCompare`, `toLowerCase` or `toUpperCase` directly. `char.ToUpperInvariant` differs from `toUpperCase` for 44 characters, such as the dotless `ı`, which .NET keeps; `text.ts` lists them, found by comparing every UTF-16 code unit.
+- `int.TryParse(..., NumberStyles.Integer, InvariantCulture)` rejects `12abc` and values outside the 32-bit range, which `parseInt` accepts, and ignores trailing NUL characters. Use `tryParseInt32` in `src/core/text.ts`; the `Columns` setting and path indexes rely on it.
 - `string.Length` and `PadLeft` count UTF-16 code units, as JavaScript's `length` and `padStart` do. Keep it that way so that table columns line up the same.
 - The writer is synchronous and runs on the extension host. Text shapes (`.s`) and world files (`.w`) can be several megabytes, so keep the tokenizer index-based, without regular expressions or substrings per character.
 
@@ -105,6 +106,8 @@ npm run test:vscode    # build, then integration tests in a VS Code downloaded t
 npm run corpus -- f:\Games\_origTrainSim   # compare with SimisSharp on real files
 npm run package        # build the .vsix with @vscode/vsce
 ```
+
+If Vitest fails every file with `TypeError: Cannot read properties of undefined (reading 'config')`, the shell entered the project folder with a drive letter in another case (such as `/e/...` in Git Bash); run it from PowerShell, or from `E:\source\repos\Kebarko\SimisFormatter`.
 
 Before reporting a change as done, run `typecheck`, `lint` and `test`, and `test:vscode` when `src/extension.ts`, `src/formattingProvider.ts`, `src/settings.ts` or `package.json` changed.
 

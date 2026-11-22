@@ -6,8 +6,6 @@ SimisFormatter is a Visual Studio Code extension that formats the text files of 
 
 The formatter indents blocks, writes tables such as `ThrottleRPMTab` in aligned columns, and keeps comment blocks, blank lines and quotes. It follows the rules of the [SimisSharp](https://github.com/Kebarko/SimisSharp) library, which reads files the way Open Rails reads them.
 
-> **Status:** in development. The formatting rules are being ported from SimisSharp. Until they are, **Format Document** reports that the formatter is not ready.
-
 ## Supported files
 
 Files with these extensions are opened as MSTS SIMIS documents: `.act`, `.con`, `.cvf`, `.eng`, `.env`, `.fbk`, `.haz`, `.mkr`, `.pal`, `.pat`, `.rdb`, `.ref`, `.rit`, `.s`, `.sd`, `.sms`, `.srv`, `.tdb`, `.tit`, `.trf`, `.trk`, `.w`, `.wag` and `.ws`.
