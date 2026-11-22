@@ -111,6 +111,8 @@ If Vitest fails every file with `TypeError: Cannot read properties of undefined 
 
 Before reporting a change as done, run `typecheck`, `lint` and `test`, and `test:vscode` when `src/extension.ts`, `src/formattingProvider.ts`, `src/settings.ts` or `package.json` changed.
 
+CI (`.github/workflows/ci.yml`) runs `typecheck`, `lint`, `test` and `test:vscode` on Windows and Linux for every push to `main` and every pull request, and keeps the `.vsix` built on Linux as an artifact. It cannot run the corpus check, so run that locally.
+
 Press F5 in VS Code ("Run Extension") to try the extension in a development host, which opens `test/fixtures/`. Publishing to the Visual Studio Marketplace or Open VSX is not set up yet; the `publisher` in `package.json` (`kebarko`) must match the Marketplace publisher ID when it is.
 
 ## Code style

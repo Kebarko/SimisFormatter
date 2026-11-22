@@ -1,4 +1,5 @@
 # Everything except dist/, package.json, README.md, CHANGELOG.md and LICENSE is left out of the .vsix.
+.github/**
 .vscode/**
 .vscode-test/**
 .corpus/**
