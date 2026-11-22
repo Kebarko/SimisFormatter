@@ -1,0 +1,24 @@
+{
+  // The extension source. It has no Node types, so that src/ cannot depend on Node APIs:
+  // the core is plain string processing, and the extension uses only the VS Code API.
+  // test/, test/vscode/ and tools/ have their own tsconfig.json that extends this one.
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "types": [],
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true,
+    "noEmit": true
+  },
+  "include": ["src"]
+}

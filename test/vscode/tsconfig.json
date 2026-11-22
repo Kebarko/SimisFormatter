@@ -1,0 +1,15 @@
+{
+  // Integration tests, compiled to CommonJS in out/ and run by Mocha inside VS Code.
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "module": "node16",
+    "moduleResolution": "node16",
+    "verbatimModuleSyntax": false,
+    "types": ["node", "mocha"],
+    "noEmit": false,
+    "rootDir": ".",
+    "outDir": "../../out/test/vscode",
+    "sourceMap": true
+  },
+  "include": ["./**/*.ts"]
+}

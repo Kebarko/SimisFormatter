@@ -1,0 +1,19 @@
+# Everything except dist/, package.json, README.md, CHANGELOG.md and LICENSE is left out of the .vsix.
+.vscode/**
+.vscode-test/**
+.corpus/**
+node_modules/**
+out/**
+src/**
+test/**
+tools/**
+**/*.map
+**/tsconfig.json
+.editorconfig
+.gitattributes
+.gitignore
+.vscode-test.mjs
+esbuild.mjs
+eslint.config.mjs
+vitest.config.mts
+CLAUDE.md

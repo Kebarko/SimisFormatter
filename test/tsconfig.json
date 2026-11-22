@@ -1,0 +1,9 @@
+{
+  // Unit tests, run by Vitest in Node.
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": ["node"]
+  },
+  "include": ["./**/*.ts"],
+  "exclude": ["./vscode"]
+}

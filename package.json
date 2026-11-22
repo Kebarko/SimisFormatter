@@ -1,0 +1,379 @@
+{
+  "name": "simis-formatter",
+  "displayName": "SimisFormatter",
+  "description": "Formats the text files of Microsoft Train Simulator (MSTS) and Open Rails, such as engines, wagons, consists and activities.",
+  "version": "0.1.0",
+  "publisher": "kebarko",
+  "author": "Miroslav Rábek",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Kebarko/SimisFormatter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Kebarko/SimisFormatter/issues"
+  },
+  "homepage": "https://github.com/Kebarko/SimisFormatter#readme",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Formatters"
+  ],
+  "keywords": [
+    "msts",
+    "openrails",
+    "open-rails",
+    "train-simulator",
+    "simis"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "simis",
+        "aliases": [
+          "MSTS SIMIS",
+          "simis"
+        ],
+        "extensions": [
+          ".act",
+          ".con",
+          ".cvf",
+          ".eng",
+          ".env",
+          ".fbk",
+          ".haz",
+          ".mkr",
+          ".pal",
+          ".pat",
+          ".rdb",
+          ".ref",
+          ".rit",
+          ".s",
+          ".sd",
+          ".sms",
+          ".srv",
+          ".tdb",
+          ".tit",
+          ".trf",
+          ".trk",
+          ".w",
+          ".wag",
+          ".ws"
+        ],
+        "filenames": [
+          "activity.dat",
+          "bitmaps.dat",
+          "cabedit.dat",
+          "camcfg.dat",
+          "carspawn.dat",
+          "combowidget.dat",
+          "combowidget2.dat",
+          "combowidget3.dat",
+          "combowidget4.dat",
+          "combowidget5.dat",
+          "combowidget6.dat",
+          "combowidget7.dat",
+          "combowidget8.dat",
+          "combowidget9.dat",
+          "combowidget10.dat",
+          "combowidget11.dat",
+          "conwidg.dat",
+          "cursors.dat",
+          "debrief.dat",
+          "debrief2.dat",
+          "dialogs.dat",
+          "driveraids.dat",
+          "drivers.db",
+          "forests.dat",
+          "gantry.dat",
+          "gui_fnts.dat",
+          "gui_snds.dat",
+          "hud_dsl2.dat",
+          "hud_elec2.dat",
+          "hud_stm2.dat",
+          "icon_sets.dat",
+          "intro.dat",
+          "lo_td_idx.dat",
+          "load.dat",
+          "loco.dat",
+          "mdrivers.dat",
+          "monitor.dat",
+          "naviwidg.dat",
+          "notebook.dat",
+          "onbwidg.dat",
+          "optwidg.dat",
+          "points.dat",
+          "popwid_l.dat",
+          "popwid_s.dat",
+          "progress.dat",
+          "route.dat",
+          "schoolwidg.dat",
+          "screens.dat",
+          "sigcfg.dat",
+          "soundcfg.dat",
+          "speedpost.dat",
+          "ssource.dat",
+          "start.dat",
+          "td_idx.dat",
+          "telepole.dat",
+          "tips.dat",
+          "toolkitwidg.dat",
+          "trainops.dat",
+          "tsection.dat",
+          "ttype.dat"
+        ],
+        "firstLine": "^SIMISA@@@@@@@@@@JINX0..t"
+      }
+    ],
+    "configuration": {
+      "title": "SimisFormatter",
+      "properties": {
+        "simisFormatter.preserveQuotes": {
+          "type": "boolean",
+          "default": true,
+          "scope": "resource",
+          "order": 1,
+          "markdownDescription": "Keep the quotes of values that were quoted in the file. When off, quotes are written only where a value needs them, such as a value with a space, or where removing them would change the meaning, such as strings joined with `+`."
+        },
+        "simisFormatter.preserveComments": {
+          "type": "boolean",
+          "default": true,
+          "scope": "resource",
+          "order": 2,
+          "markdownDescription": "Keep comment blocks: `comment ( ... )`, `skip ( ... )` and blocks whose name starts with `#` or `_`. When off, they are removed."
+        },
+        "simisFormatter.preserveCommentPosition": {
+          "type": "boolean",
+          "default": true,
+          "scope": "resource",
+          "order": 3,
+          "markdownDescription": "Keep a comment block on the same line as the value or block before it, where it was on the same line in the file. When off, it starts a new line like any other block."
+        },
+        "simisFormatter.preserveEmptyLines": {
+          "type": "boolean",
+          "default": true,
+          "scope": "resource",
+          "order": 4,
+          "markdownDescription": "Keep the blank lines of the file. When off, no blank lines are written."
+        },
+        "simisFormatter.collapseEmptyLines": {
+          "type": "boolean",
+          "default": true,
+          "scope": "resource",
+          "order": 5,
+          "markdownDescription": "Write several blank lines in a row as one. Applies only when `#simisFormatter.preserveEmptyLines#` is on."
+        },
+        "simisFormatter.ignoreCase": {
+          "type": "boolean",
+          "default": true,
+          "scope": "resource",
+          "order": 6,
+          "markdownDescription": "Ignore letter case when matching the paths in `#simisFormatter.inline#` and `#simisFormatter.table#`, as MSTS and Open Rails ignore it."
+        },
+        "simisFormatter.inline": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "InertiaTensor",
+            "Conditions",
+            "State",
+            "Initial_Trigger",
+            "Discrete_Trigger",
+            "Variable_Trigger",
+            "Random_Trigger"
+          ],
+          "scope": "resource",
+          "order": 7,
+          "markdownDescription": "Paths of blocks that are written on one line, together with everything in them, such as `InertiaTensor`. A path is a list of block names separated by `/`, where the last name is the block and each name before it is the next block around it, such as `Engine/MaxPower`. A path that starts with `/` starts at the top of the file. `*` matches any text and `?` any one character."
+        },
+        "simisFormatter.table": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "columns"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "markdownDescription": "Path of the blocks, written as in `#simisFormatter.inline#`, such as `ThrottleRPMTab` or `CurvePoints/*`."
+              },
+              "columns": {
+                "type": "string",
+                "markdownDescription": "Number of columns, such as `2`, or a path from the block to the value that holds the number, such as `../[2]`. A block whose number of columns is 0 or less, or cannot be found, is written normally."
+              },
+              "columnSeparator": {
+                "type": "string",
+                "default": " ",
+                "markdownDescription": "Text between columns."
+              },
+              "offset": {
+                "type": "integer",
+                "minimum": 0,
+                "default": 0,
+                "markdownDescription": "Number of values written before the table, such as a row count."
+              },
+              "fixedWidth": {
+                "type": "boolean",
+                "default": false,
+                "markdownDescription": "Pad values on the left to the width of the widest value in their column, so that numbers line up on the right."
+              }
+            }
+          },
+          "default": [
+            {
+              "name": "Briefing",
+              "columns": "2",
+              "columnSeparator": ""
+            },
+            {
+              "name": "Friction",
+              "columns": "5",
+              "columnSeparator": "\t"
+            },
+            {
+              "name": "Description",
+              "columns": "2",
+              "columnSeparator": ""
+            },
+            {
+              "name": "EngineOperatingProcedures",
+              "columns": "2",
+              "columnSeparator": ""
+            },
+            {
+              "name": "Table",
+              "columns": "../[2]",
+              "columnSeparator": " ",
+              "fixedWidth": true
+            },
+            {
+              "name": "BrakePipeChargeRate",
+              "columns": "2",
+              "columnSeparator": " ",
+              "fixedWidth": true
+            },
+            {
+              "name": "BrakePipeDischargeRate",
+              "columns": "2",
+              "columnSeparator": " ",
+              "fixedWidth": true
+            },
+            {
+              "name": "ThrottleRPMTab",
+              "columns": "2",
+              "columnSeparator": " ",
+              "fixedWidth": true
+            },
+            {
+              "name": "DieselPowerTab",
+              "columns": "2",
+              "columnSeparator": " ",
+              "fixedWidth": true
+            },
+            {
+              "name": "DieselTorqueTab",
+              "columns": "2",
+              "columnSeparator": " ",
+              "fixedWidth": true
+            },
+            {
+              "name": "DieselConsumptionTab",
+              "columns": "2",
+              "columnSeparator": " ",
+              "fixedWidth": true
+            },
+            {
+              "name": "ORTSBrakeShoeFriction",
+              "columns": "2",
+              "columnSeparator": " ",
+              "fixedWidth": true
+            },
+            {
+              "name": "ORTSMaxTractiveForceCurves/*",
+              "columns": "2",
+              "columnSeparator": " ",
+              "fixedWidth": true
+            },
+            {
+              "name": "ORTSDynamicBrakeForceCurves/*",
+              "columns": "2",
+              "columnSeparator": " ",
+              "fixedWidth": true
+            },
+            {
+              "name": "ORTSDynamicBrakeForceCurvesAC/*",
+              "columns": "2",
+              "columnSeparator": " ",
+              "fixedWidth": true
+            },
+            {
+              "name": "ORTSDynamicBrakeForceCurvesDC/*",
+              "columns": "2",
+              "columnSeparator": " ",
+              "fixedWidth": true
+            },
+            {
+              "name": "CurvePoints/*",
+              "columns": "2",
+              "columnSeparator": " ",
+              "fixedWidth": true,
+              "offset": 1
+            },
+            {
+              "name": "SteamSpecialEffects/*",
+              "columns": "3",
+              "columnSeparator": " "
+            },
+            {
+              "name": "DieselSpecialEffects/*",
+              "columns": "3",
+              "columnSeparator": " "
+            }
+          ],
+          "scope": "resource",
+          "order": 8,
+          "markdownDescription": "Blocks whose values are written in rows with a fixed number of columns, such as `ThrottleRPMTab`. When several entries match a block, the first one is used."
+        }
+      }
+    },
+    "configurationDefaults": {
+      "[simis]": {
+        "editor.insertSpaces": false
+      }
+    }
+  },
+  "scripts": {
+    "build": "node esbuild.mjs",
+    "watch": "node esbuild.mjs --watch",
+    "typecheck": "tsc -p . && tsc -p test && tsc -p test/vscode --noEmit && tsc -p tools",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:vscode": "npm run build && tsc -p test/vscode && vscode-test",
+    "corpus": "tsx tools/corpus.ts",
+    "package": "vsce package --no-dependencies",
+    "vscode:prepublish": "node esbuild.mjs --production"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.20.5",
+    "@types/vscode": "1.90.0",
+    "@vscode/test-cli": "^0.0.15",
+    "@vscode/test-electron": "^3.1.0",
+    "@vscode/vsce": "^4.1.1",
+    "esbuild": "^0.28.2",
+    "eslint": "^10.15.0",
+    "globals": "^17.14.0",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.73.0",
+    "vitest": "^5.1.1"
+  }
+}

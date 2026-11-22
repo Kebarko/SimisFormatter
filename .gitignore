@@ -1,0 +1,20 @@
+# Dependencies and build output
+node_modules/
+dist/
+out/
+*.vsix
+
+# VS Code instances downloaded by the integration tests
+.vscode-test/
+
+# Output of the corpus check, which holds text from copyrighted files
+.corpus/
+
+# .NET build output of the tools
+tools/**/bin/
+tools/**/obj/
+.vs/
+
+# Logs
+*.log
+npm-debug.log*

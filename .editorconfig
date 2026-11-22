@@ -1,0 +1,22 @@
+# To learn more about .editorconfig see https://aka.ms/editorconfigdocs
+
+# top-most EditorConfig file
+root = true
+
+# All files
+[*]
+end_of_line = crlf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+indent_style = space
+indent_size = 4
+
+# JSON and YAML files
+[*.{json,yml,yaml}]
+indent_size = 2
+
+# Test fixtures are SIMIS files as MSTS writes them: UTF-16 with a byte order mark, indented with tabs
+[test/fixtures/**]
+charset = utf-16le
+indent_style = tab

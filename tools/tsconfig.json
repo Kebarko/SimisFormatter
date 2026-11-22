@@ -1,0 +1,8 @@
+{
+  // Development scripts, run by tsx in Node.
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": ["node"]
+  },
+  "include": ["./**/*.ts"]
+}

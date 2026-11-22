@@ -1,0 +1,5 @@
+# Text files are stored with LF and checked out with CRLF, as .editorconfig asks.
+* text=auto eol=crlf
+
+# Test fixtures are UTF-16 files with CRLF line endings, as MSTS writes them. Git must not convert them.
+test/fixtures/** -text
