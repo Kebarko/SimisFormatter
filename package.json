@@ -2,7 +2,7 @@
   "name": "simis-formatter",
   "displayName": "SimisFormatter",
   "description": "Formats the text files of Microsoft Train Simulator (MSTS) and Open Rails, such as engines, wagons, consists and activities.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "kebarko",
   "author": "Miroslav Rábek",
   "license": "MIT",

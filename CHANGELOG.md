@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.1 (2026-11-26)
 
 - Starts when a SIMIS file is opened. Version 0.1.0 never started, so VS Code reported that there was no formatter for SIMIS files.
 - Works in folders that are not trusted (Restricted Mode). Before, VS Code turned the extension off in such a folder, so its SIMIS files opened as plain text and could not be formatted.

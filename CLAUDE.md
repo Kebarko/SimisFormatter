@@ -8,7 +8,7 @@ The formatting rules are ported from the C# library **SimisSharp**, which is the
 
 Repository: https://github.com/Kebarko/SimisFormatter. License: MIT, as SimisSharp.
 
-**Status:** the reader, parser and writer are ported, and the formatter matches SimisSharp on the whole test corpus (see "Test corpus"). Publishing to the Visual Studio Marketplace is set up (see "Releasing"). Version 0.1.0 is published, but it never starts (no activation event) and is turned off in Restricted Mode; both are fixed under "Unreleased" in `CHANGELOG.md`.
+**Status:** the reader, parser and writer are ported, and the formatter matches SimisSharp on the whole test corpus (see "Test corpus"). Publishing to the Visual Studio Marketplace is set up (see "Releasing"). Version 0.1.0 is published, but it never starts (no activation event) and is turned off in Restricted Mode; version 0.1.1 fixes both.
 
 ## Reference implementation: SimisSharp
 
