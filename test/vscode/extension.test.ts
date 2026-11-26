@@ -16,8 +16,36 @@ function openFixture(name: string): Thenable<vscode.TextDocument> {
     return vscode.workspace.openTextDocument(path.join(fixtures, name));
 }
 
-suiteSetup(async () => {
-    await vscode.extensions.getExtension('kebarko.simis-formatter')?.activate();
+/**
+ * Waits until the extension is active, as VS Code activates it by itself.
+ * @param extension The extension to wait for.
+ * @param timeout The longest time to wait, in milliseconds.
+ * @returns True when the extension became active in time.
+ */
+async function whenActive(extension: vscode.Extension<unknown>, timeout: number): Promise<boolean> {
+    const end = Date.now() + timeout;
+    while (!extension.isActive && Date.now() < end) {
+        await new Promise((resolve) => setTimeout(resolve, 50));
+    }
+    return extension.isActive;
+}
+
+// The tests never call activate() themselves, so that they fail when VS Code would not start the extension.
+// This suite runs first, and the other suites rely on the activation it waits for.
+suite('Activation', () => {
+    test('The extension starts when a SIMIS document is opened', async () => {
+        // Arrange
+        const extension = vscode.extensions.getExtension('kebarko.simis-formatter');
+        assert.ok(extension);
+        assert.strictEqual(extension.isActive, false);
+
+        // Act
+        await openFixture('Sample.eng');
+        const active = await whenActive(extension, 10000);
+
+        // Assert
+        assert.strictEqual(active, true);
+    });
 });
 
 suite('Language', () => {

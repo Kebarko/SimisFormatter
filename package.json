@@ -28,6 +28,14 @@
     "simis"
   ],
   "main": "./dist/extension.js",
+  "activationEvents": [
+    "onLanguage:simis"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true
+    }
+  },
   "contributes": {
     "languages": [
       {

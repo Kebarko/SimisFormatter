@@ -8,7 +8,7 @@ The formatting rules are ported from the C# library **SimisSharp**, which is the
 
 Repository: https://github.com/Kebarko/SimisFormatter. License: MIT, as SimisSharp.
 
-**Status:** the reader, parser and writer are ported, and the formatter matches SimisSharp on the whole test corpus (see "Test corpus"). Publishing to the Visual Studio Marketplace is set up (see "Releasing"), but no version is published yet.
+**Status:** the reader, parser and writer are ported, and the formatter matches SimisSharp on the whole test corpus (see "Test corpus"). Publishing to the Visual Studio Marketplace is set up (see "Releasing"). Version 0.1.0 is published, but it never starts (no activation event) and is turned off in Restricted Mode; both are fixed under "Unreleased" in `CHANGELOG.md`.
 
 ## Reference implementation: SimisSharp
 
@@ -74,6 +74,8 @@ Run the corpus check after every change to the reader, parser or writer. Report 
 - `filenames` for `.dat` and `.db` files, whose extensions are too general to claim: `drivers.db` and the SIMIS `.dat` files of the corpus, such as `tsection.dat`, `sigcfg.dat`, `carspawn.dat` and the GUI `.dat` files. `sigscr.dat` is a signal script, not a SIMIS file, and is not listed.
 - `firstLine`: `^SIMISA@@@@@@@@@@JINX0..t`, for SIMIS files with other names. VS Code uses it only when no extension or file name matches.
 
+`activationEvents` lists `onLanguage:simis`, and it must stay. VS Code generates an `onLanguage` event from a language contribution only when the language has a `configuration` file, which `simis` does not have (a language configuration would add brackets and comment toggling, which are out of scope). Without the event the extension never starts, and VS Code reports "There is no formatter for 'simis' files installed".
+
 Not claimed: `.txt` (the help texts in `GLOBAL\` are SIMIS files, but the extension belongs to plain text) and `.bak`. Users can map them with `files.associations`.
 
 Some of the extensions are also used by other languages (`.env`, `.con`, `.act`, `.pat`, `.ref`, `.s`, `.w`). The header check below keeps the formatter away from files that are not SIMIS text.
@@ -86,6 +88,7 @@ Some of the extensions are also used by other languages (`.env`, `.con`, `.act`,
 - The formatter works on the text VS Code has decoded and never touches bytes or encodings. VS Code reads UTF-16 files with a byte order mark, as MSTS writes them, and saves them in the same encoding. Files in an ANSI code page need the right `files.encoding`.
 - Line endings follow the document (`document.eol`). VS Code turns line breaks in an edit into the document's line endings anyway. The writer takes the line ending as a parameter instead of writing CRLF.
 - Settings are read with `workspace.getConfiguration('simisFormatter', document)`, so folder and language settings apply.
+- The extension works in Restricted Mode: `package.json` declares `"capabilities": { "untrustedWorkspaces": { "supported": true } }`, because it runs no code from the workspace and its settings only change the formatting (the wildcard matcher uses a table, not regular expressions, so no pattern can hang it). Without the declaration, VS Code turns off any extension with a `main` in a folder that is not trusted, the language `simis` is not registered, and the files open as plain text ("There is no formatter for 'plaintext' files installed"). A new setting that runs a program or reads a file would need `"limited"` and `restrictedConfigurations` instead.
 
 ### Settings
 
@@ -137,7 +140,7 @@ Press F5 in VS Code ("Run Extension") to try the extension in a development host
 - `test/manifest.test.ts` checks that the settings in `package.json` match `WriterOptions`.
 - Unit tests of the core live in `test/core/`. The SimisSharp tests about reading, quoting, comments, paths, wildcards and writing (`SimisReaderTest`, `QuotingTest`, `CommentTest`, `SimisPathServiceTest`, `WildcardMatcherTest`, `WriterTest`, and the round-trip cases of `SimisDocumentTest`) are ported with the same cases and readable names. Keep their `// Arrange`, `// Act`, `// Assert` structure.
 - Each bug fix starts with a test that fails.
-- Integration tests in `test/vscode/` stay few: the language is detected and a fixture is formatted through the provider.
+- Integration tests in `test/vscode/` stay few: the extension starts by itself, the language is detected and a fixture is formatted through the provider. They never call `activate()`, so that a missing activation event fails them; the first suite waits for VS Code to start the extension, and the others rely on it.
 - Fixtures in `test/fixtures/` are small, made-up files, saved as MSTS saves them: UTF-16LE with a byte order mark and CRLF (`.editorconfig` and `.gitattributes` keep them so). Never commit files from an MSTS installation or third-party add-ons (see "Test corpus").
 
 ## Git
